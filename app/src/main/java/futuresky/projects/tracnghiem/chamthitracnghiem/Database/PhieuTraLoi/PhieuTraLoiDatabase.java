@@ -26,12 +26,12 @@ public class PhieuTraLoiDatabase {
         dl.put(dbHelper.ID, phieuTraLoi.getID());
         dl.put(dbHelper.MaBaiThi, phieuTraLoi.getMaBaiThi());
         dl.put(dbHelper.SBD, phieuTraLoi.getSBD());
-        dl.put(dbHelper.Name, phieuTraLoi.getPathToName());
+        dl.put(dbHelper.Name, phieuTraLoi.getName_image());
         dl.put(dbHelper.Diem, phieuTraLoi.getDiem());
         dl.put(dbHelper.MaDe, phieuTraLoi.getMaDe());
         dl.put(dbHelper.SoCauDung, phieuTraLoi.getSoCauDung());
         dl.put(dbHelper.TongCau, phieuTraLoi.getSoCauCuaBaiThi());
-        dl.put(dbHelper.PhieuTL, phieuTraLoi.getPathToPhieuTraLoi());
+        dl.put(dbHelper.PhieuTL, phieuTraLoi.getPTL_image());
         this.database = this.dbHelper.getWritableDatabase();
         this.database.insert(dbHelper.TABLE_NAME, null, dl);
     }
@@ -41,12 +41,12 @@ public class PhieuTraLoiDatabase {
         dl.put(dbHelper.ID, phieuTraLoi.getID());
         dl.put(dbHelper.MaBaiThi, phieuTraLoi.getMaBaiThi());
         dl.put(dbHelper.SBD, phieuTraLoi.getSBD());
-        dl.put(dbHelper.Name, phieuTraLoi.getPathToName());
+        dl.put(dbHelper.Name, phieuTraLoi.getName_image());
         dl.put(dbHelper.Diem, phieuTraLoi.getDiem());
         dl.put(dbHelper.MaDe, phieuTraLoi.getMaDe());
         dl.put(dbHelper.SoCauDung, phieuTraLoi.getSoCauDung());
         dl.put(dbHelper.TongCau, phieuTraLoi.getSoCauCuaBaiThi());
-        dl.put(dbHelper.PhieuTL, phieuTraLoi.getPathToPhieuTraLoi());
+        dl.put(dbHelper.PhieuTL, phieuTraLoi.getPTL_image());
         this.database = this.dbHelper.getWritableDatabase();
         this.database.replace(dbHelper.TABLE_NAME, null, dl);
     }
@@ -62,9 +62,9 @@ public class PhieuTraLoiDatabase {
         if (mCursor.moveToFirst()) {
             do {
                 PhieuTraLoi ptl = new PhieuTraLoi(mCursor.getString(0), mCursor.getString(1),
-                        mCursor.getString(2), mCursor.getString(3),
+                        mCursor.getString(2), mCursor.getBlob(3),
                         mCursor.getString(4), mCursor.getString(5),
-                        mCursor.getString(6), mCursor.getString(7), mCursor.getString(8));
+                        mCursor.getString(6), mCursor.getString(7), mCursor.getBlob(8));
                 if (Integer.parseInt(ptl.getMaBaiThi()) == IDofBaiThi)
                     ds.add(ptl);
             }
@@ -102,8 +102,8 @@ public class PhieuTraLoiDatabase {
         if (myCoursor != null) {
             myCoursor.moveToFirst();
             return new PhieuTraLoi(myCoursor.getString(0), myCoursor.getString(1), myCoursor.getString(2),
-                    myCoursor.getString(3), myCoursor.getString(4), myCoursor.getString(5),
-                    myCoursor.getString(6), myCoursor.getString(7), myCoursor.getString(8));
+                    myCoursor.getBlob(3), myCoursor.getString(4), myCoursor.getString(5),
+                    myCoursor.getString(6), myCoursor.getString(7), myCoursor.getBlob(8));
         } else
             return null;
     }

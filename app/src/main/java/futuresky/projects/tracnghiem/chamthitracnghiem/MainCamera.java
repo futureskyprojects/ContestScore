@@ -2,15 +2,20 @@ package futuresky.projects.tracnghiem.chamthitracnghiem;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,6 +28,8 @@ import android.widget.Toast;
 
 import com.itextpdf.text.pdf.BaseField;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -44,6 +51,7 @@ import org.opencv.imgproc.Imgproc;
 
 import futuresky.projects.tracnghiem.chamthitracnghiem.CustomView.MyCameraView;
 import futuresky.projects.tracnghiem.chamthitracnghiem.CustomView.RectPreview;
+import futuresky.projects.tracnghiem.chamthitracnghiem.CustomView.ViewResultScore;
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.BaiThi.BaiThi;
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.DiemThi.DiemThi;
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.PhieuTraLoi.PhieuTraLoi;
@@ -550,10 +558,10 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
                     }
                     Mat mat2 = this.mBinary1;
                     point1 = new Point((double) (((int) center.x) + startX), (double) (((int) center.y) + startY));
-                    Imgproc.circle(mat2, point1, radius, new Scalar(255.0d, 0.0d, 0.0d), (int) (this.heightRect[j] / 7.0f));    // Chấm các điểm nhận dạng
+//                    Imgproc.circle(mat2, point1, radius, new Scalar(255.0d, 0.0d, 0.0d), (int) (this.heightRect[j] / 7.0f));    // Chấm các điểm nhận dạng
                     Mat mat3 = this.mBinary1;
                     point1 = new Point((double) (((int) center.x) + startX), (double) (((int) center.y) + startY));
-                    Imgproc.circle(mat3, point1, (((int) (this.heightRect[j] / 7.0f)) + radius) + 1, new Scalar(255.0d, 0.0d, 0.0d), 2);
+//                    Imgproc.circle(mat3, point1, (((int) (this.heightRect[j] / 7.0f)) + radius) + 1, new Scalar(255.0d, 0.0d, 0.0d), 2);
                     double r = this.imageProcessing.getRatePixel(this.mBinary1.submat(myAnswer[idx][idy]));
                     myPixel[idx][idy] = r;
                 }
@@ -562,24 +570,9 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
             if ((j != this.imageProcessing.getAreaMade(baithi.getLoaiGiay()) &&
                     j != this.imageProcessing.getAreaSBD(baithi.getLoaiGiay())))
                 this.draw[j] = this.imageProcessing.findAnswer(j, myPixel, myDiemThi.findAnswer, baithi.getLoaiGiay()); // dùng để lấy đáp án đúng
-//            //
-//            String OK = "\n---------------------------------------\n";
-//            for (int i = 0; i < idx; i++)
-//            {
-//                String x = "";
-//                for (int k = 0;k < idy; k++)
-//                {
-//                    x += myPixel[i][j] + " ";
-//                }
-//                OK += x + "\n";
-//            }
-//            OK+="\n---------------------------------------\n";
-//            Log.d("myPixel " + j, OK);
-//            //
             if (j == this.imageProcessing.getAreaMade(baithi.getLoaiGiay()) ||
                     j == this.imageProcessing.getAreaSBD(baithi.getLoaiGiay())) {
                 if (j == this.imageProcessing.getAreaMade(baithi.getLoaiGiay())) {
-//                    Log.d("J="+j, "Của mã đề");
                     myDiemThi.made = this.imageProcessing.getMade(myPixel);
                     int[] md = this.imageProcessing.convertStringToArray(myDiemThi.made);
                     for (idx = 2; idx < 5; idx++) {
@@ -593,7 +586,6 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
                         }
                     }
                 } else if (j == this.imageProcessing.getAreaSBD(baithi.getLoaiGiay())) {
-//                    Log.d("J="+j, "Của số báo danh");
                     myDiemThi.sobaodanh = this.imageProcessing.getSoBaoDanh(myPixel);
                     int[] sbd = this.imageProcessing.convertStringToArray(myDiemThi.sobaodanh);
                     for (idx = 0; idx < 6; idx++) {
@@ -623,25 +615,11 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
             }
             j++;
         }
-//        ShowMat(clone);
-//        Log.d("THÔNG TIN", "MÃ ĐỀ: " + myDiemThi.made + "\n" +
-//                "SỐ BÁO DANH: " + myDiemThi.sobaodanh);
-//        String tam = "";
-//        for (int vc = 0; vc < myDiemThi.findAnswer.length; vc++)
-//            tam += myDiemThi.findAnswer[vc] + " ";
-//        Log.d("TRẢ LỜI", "\n---------------------------------\n" +
-//                tam +
-//                "\n---------------------------------\n");
-//        bitmap1 = Bitmap.createBitmap(widthCal, this.myHeight - heightCal, Bitmap.Config.ARGB_8888);
-//        Utils.matToBitmap(this.mBinary1, bitmap1);
-//        saveImage(bitmap1, "answer/binary", "binaryImage1", 0);
     }
 
     public void intentMode(int mode, Point[] arrayDst, int widthCal, int heightCal) {
         bitmap = Bitmap.createBitmap(widthCal, this.myHeight - heightCal, Bitmap.Config.ARGB_8888);
-        int id;
         int checkId;
-        Intent intent;
         if (mode == 0) {    // Dành cho lúc nhập đáp án
 //            Utils.matToBitmap(this.clone, bitmap);
 //            Bitmap tempBitmap = Bitmap.createBitmap(widthCal, this.myHeight - heightCal, Bitmap.Config.ARGB_8888);
@@ -666,33 +644,23 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
 //            startActivity(intent);
 //            Log.d("vinhtuanleTimeStIntent", (System.currentTimeMillis() - startIntent) + " ");
         } else if (mode == 1) {
-            id = phieuTraLoiDatabase.MaxID() + 1;
+            checkId = -1;
             if (dapAnDatabase != null) {
-                checkId = dapAnDatabase.LayIdMaDe(Integer.parseInt(imageProcessing.convertMadeToText(myDiemThi.made)),
-                        Integer.parseInt(baithi.getId()));  // Lấy id của mã đè hiện tại trong csdl
+                try {
+                    checkId = dapAnDatabase.LayIdMaDe(Integer.parseInt(imageProcessing.convertMadeToText(myDiemThi.made)),
+                            Integer.parseInt(baithi.getId()));  // Lấy id của mã đè hiện tại trong csdl
+                } catch (NumberFormatException e)
+                {
+                    e.printStackTrace();
+                }
                 if (checkId > -1) {     // nếu tồn tại, tức checkId là mã số của mã đề đó thì
-//                    myDiemThi.findKey = dapAnDatabase.layDapAn(checkId).ArrayDapAn();
                     myDiemThi.findKey = this.imageProcessing.convertKeyToArray(dapAnDatabase.layDapAn(checkId).getDapAn(),
                             baithi.getLoaiGiay(), baithi.getSoCau());   // Chuyển đổi chuỗi đáp án sang dãy các đáp án tương ứng loại giấy và số câu
-                    String tam = "";
-                    for (int vc = 0; vc < myDiemThi.findKey.length; vc++)
-                        tam += myDiemThi.findKey[vc] + " ";
-                    Log.d("ĐÁP ÁN", "\n---------------------------------\n" +
-                            tam +
-                            "\n---------------------------------\n");
                 }
             }
-            String tam = "";
-            for (int vc = 0; vc < myDiemThi.findAnswer.length; vc++)
-                tam += myDiemThi.findAnswer[vc] + " ";
-            Log.d("TRẢ LỜI", "\n---------------------------------\n" +
-                    tam +
-                    "\n---------------------------------\n");
-//            this.imageProcessing.printAnswer(1, myDiemThi.findAnswer);
-            int[] trueAnswer = this.imageProcessing.getTrueAnswer(myDiemThi.findAnswer, myDiemThi.findKey, baithi.getLoaiGiay());
+            int[] trueAnswer = this.imageProcessing.getTrueAnswer(myDiemThi.findAnswer, myDiemThi.findKey, baithi.getSoCau());
             Point[] rectTrue = this.imageProcessing.getRectTrue(this.points1, this.points2, this.widthResult, baithi.getLoaiGiay());
             for (int m = 20; m < baithi.getSoCau() + 20; m++) {
-                Log.d("trueAnswer", trueAnswer[m] + " ");
                 if (trueAnswer[m] == 1) {
                     Imgproc.circle(this.clone, rectTrue[m], 2, new Scalar(0.0d, 255.0d, 0.0d, 1.0d), 3);
                 } else {
@@ -709,18 +677,20 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
                             int startY = (int) (((double) this.startPoint[j].y) + ((((double) idx) + 0.5d) * ((double) this.heightRect[j])));
                             int radius = (int) ((this.heightRect[j] * 9.0f) / 20.0f);
                             if (this.draw[j][idx][idy] == 1) {
-                                if (myDiemThi.findKey[this.imageProcessing.findTrueAnswer(j, idy, baithi.getLoaiGiay())] == /*4*/5 - idx) {
+                                if (myDiemThi.findKey[this.imageProcessing.findTrueAnswer(j, idy, baithi.getLoaiGiay())] == /*4*/5 - idx)
+                                {
                                     i = radius;
                                     Imgproc.circle(this.clone, new Point((double) (((float) startX) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM)), (double) (((float) startY) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM))), i, new Scalar(0.0d, 255.0d, 0.0d, 1.0d), (int) (this.heightRect[j] / 7.0f));
                                 }
-                            }
-                            if (this.draw[j][idx][idy] == 1) {
-                                i = radius;
-                                Imgproc.circle(this.clone, new Point((double) (((float) startX) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM)), (double) (((float) startY) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM))), i, new Scalar(255.0d, 0.0d, 0.0d, 1.0d), (int) (this.heightRect[j] / 7.0f));
+                                else
+                                {
+                                    i = radius;
+                                    Imgproc.circle(this.clone, new Point((double) (((float) startX) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM)), (double) (((float) startY) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM))), i, new Scalar(249.0d, 244.0d, 0.0d, 1.0d), (int) (this.heightRect[j] / 7.0f));
+                                }
                             } else {
                                 if (myDiemThi.findKey[this.imageProcessing.findTrueAnswer(j, idy, baithi.getLoaiGiay())] == 5/*4*/ - idx) {
                                     i = radius;
-                                    Imgproc.circle(this.clone, new Point((double) (((float) startX) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM)), (double) (((float) startY) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM))), i, new Scalar(249.0d, 244.0d, 0.0d, 1.0d), (int) (this.heightRect[j] / 7.0f));
+                                    Imgproc.circle(this.clone, new Point((double) (((float) startX) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM)), (double) (((float) startY) + (this.widthRect[j] / BaseField.BORDER_WIDTH_MEDIUM))), i, new Scalar(249.0d, /*244.*/0d, 0.0d, 1.0d), (int) (this.heightRect[j] / 7.0f));
                                 }
                             }
                         }
@@ -729,24 +699,28 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
                 j++;
             }
             Utils.matToBitmap(this.clone, bitmap);
-////            bitmap = saveImage(bitmap, "answer/answer", "answerImage" + id, 0);
-//            intent = new Intent(this, ViewAnswer.class);
-//            intent.putExtra("myPath", myPathResult);
-//            myDiemThi.score = this.imageProcessing.findScore(myDiemThi.findAnswer, myDiemThi.findKey, baithi.getSoCau());
-//            String text = myDiemThi.score + "";
-////            saveImage(this.imageProcessing.cropInfo(arrayDst, bitmap), "answer/info", "infoImage" + id, 1);
-//            float diem = ((float) Math.round(100.0f * (((float) myDiemThi.score) * this.imageProcessing.getValueSentence(
-//                    baithi.getSoCau(), 10)))) / 100.0f;
-//            String textScore = this.imageProcessing.getTextScore(baithi.getSoCau(), text, diem);
-//            Log.d("vinhtuanleScore", textScore);
-//            intent.putExtra("textScore", textScore);
-//            String textMade = this.imageProcessing.convertMadeToText(MyScore.made);
-//            String textSobaodanh = this.imageProcessing.convertMadeToText(MyScore.sobaodanh);
-//            String textAnswer = this.imageProcessing.convertArrayToString(MyScore.findAnswer);
-//            intent.putExtra("textMade", textMade);
-//            ActivityManager.answerDatabase.addAnswer(id, diem, MyScore.sobaodanh, textSobaodanh, MyScore.made, textMade, textAnswer, textScore, myPathResult, myPathInfo, HomeActivity.contestID);
-//            startActivity(intent);
+            myDiemThi.score = this.imageProcessing.findScore(myDiemThi.findAnswer, myDiemThi.findKey, baithi.getSoCau());
+            //region Chuẩn bị thông tin cho đối tượng phiếu trả lời
+            PhieuTraLoi myPhieuTraLoi = new PhieuTraLoi();
+            int MaxID = phieuTraLoiDatabase.MaxID();
+            Bitmap bm = this.imageProcessing.cropInfo(arrayDst, bitmap);
+
+            myPhieuTraLoi.setID(Integer.toString(MaxID + 1));
+            myPhieuTraLoi.setMaBaiThi(baithi.getId());
+            myPhieuTraLoi.setSBD(imageProcessing.convertMadeToText(myDiemThi.sobaodanh));
+            myPhieuTraLoi.setName_image(BitmapToBytes(bm));
+            myPhieuTraLoi.setDiem((float) myDiemThi.score*10/baithi.getSoCau());
+            myPhieuTraLoi.setMaDe(imageProcessing.convertMadeToText(myDiemThi.made));
+            myPhieuTraLoi.setSoCauDung(myDiemThi.score);
+            myPhieuTraLoi.setSoCauCuaBaiThi(baithi.getSoCau());
+            myPhieuTraLoi.setPTL_image(BitmapToBytes(RotateBitmap(bitmap, 90)));
+            //endregion
+
+            Intent resultintent = new Intent(MainCamera.this, ViewResultScore.class)
+                    .putExtra("PhieuTraLoi", myPhieuTraLoi);
+            startActivity(resultintent);
         }
+
     }
 
     void ShowText(final String myText) {
@@ -771,5 +745,18 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
                 javaCameraView.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    public Bitmap RotateBitmap(Bitmap bitmapX, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(bitmapX, 0, 0, bitmapX.getWidth(), bitmapX.getHeight(), matrix, true);
+    }
+
+    public byte[] BitmapToBytes(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.recycle();
+        return baos.toByteArray();
     }
 }

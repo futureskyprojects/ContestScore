@@ -19,18 +19,18 @@ public class PhieuTraLoiHelper extends SQLiteOpenHelper {
     public static String MaDe = "ma_de";
     public static String SoCauDung = "so_cau_dung";
     public static String TongCau = "tong_cau"; // Tổng số câu hay số câu của bài thi
-    public static String PhieuTL = "path_ptl";
+    public static String PhieuTL = "image_ptl";
     // Các truy vấn thiết yếu
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
             ID + " INTEGER PRIMARY KEY, " +
             MaBaiThi + " TEXT, " +
             SBD + " TEXT, " +
-            Name + " TEXT, " +
+            Name + " BLOB, " +
             Diem + " REAL, " +
             MaDe + " TEXT, " +
             SoCauDung + " INTEGER, " +
             TongCau + " INTEGER, " +
-            PhieuTL + " TEXT)";
+            PhieuTL + " BLOB)";
     private static final int DATABASE_VERSION = BuildConfig.VERSION_CODE;
 
     public PhieuTraLoiHelper(Context context) {
