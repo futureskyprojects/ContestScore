@@ -127,8 +127,6 @@ public class DanhSachDapAn extends AppCompatActivity {
                             else
                                 tv.setVisibility(View.VISIBLE);
                         } catch (Exception e) {
-                            Log.e("Lỗi:", e.getMessage());
-                            e.printStackTrace();
                         }
                     }
                 });
@@ -273,7 +271,6 @@ public class DanhSachDapAn extends AppCompatActivity {
             }
             else if (Decrypt[4].contains("true") && currentDapAn.getID().equals(currentDecryptedDapAn.getID()))
             {
-                Toast.makeText(this, "Vị trí của đối tượng là: " + key_adapter.getPosition(currentDapAn), Toast.LENGTH_SHORT).show();
                 key_adapter.remove(currentDapAn);
                 if (key_adapter.getCount() <= 0)
                     tv.setVisibility(View.VISIBLE);

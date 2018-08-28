@@ -52,10 +52,13 @@
             android:name=".NhapDapAn.Hand.MakeActivity"
             android:label="Đáp án cho đề 1234"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".DataStruct.DapAn.DanhSachDapAn"
+        <activity
+            android:name=".DataStruct.DapAn.DanhSachDapAn"
             android:label="Danh sách đáp án"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".CustomView.ViewResultScore"
+            android:label="Xem kết quả"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

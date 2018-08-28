@@ -55,6 +55,16 @@ public class DapAnDatabase {
     // Lấy ID mã đề (Cũng là phương thức kiểm tra xem mã đề có tồn tại hay không)
     public int LayIdMaDe(int made, int mabaithi)
     {
+        this.database = this.dapAnHelper.getReadableDatabase();
+        Cursor mCursor = this.database.rawQuery("SELECT * FROM " + DapAnHelper.Table_DapAn +
+                " WHERE " + DapAnHelper.ID_BaiThi + " = " + mabaithi, null);
+        if (mCursor.moveToFirst()) {
+            do {
+                if (Integer.parseInt(mCursor.getString(2))==made)
+                    return Integer.parseInt(mCursor.getString(0));
+            }
+            while (mCursor.moveToNext());
+        }
         return -1;
     }
     // Lấy tất cả các đáp án

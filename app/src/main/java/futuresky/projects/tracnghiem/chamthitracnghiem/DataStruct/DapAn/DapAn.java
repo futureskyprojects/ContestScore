@@ -67,4 +67,12 @@ public class DapAn {
             ds.add(c - 48);
         return ds;
     }
+    public int[] ArrayDapAn()
+    {
+        int[] ds = new int[DapAn.length()];
+        char[] dsda = DapAn.toCharArray();
+        for (int i =0; i< DapAn.length(); i++)
+            ds[i] = dsda[i] - 48;
+        return ds;
+    }
 }

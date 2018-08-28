@@ -121,6 +121,7 @@ public class BaiThiAdapter extends ArrayAdapter<BaiThi> implements View.OnClickL
                                 @Override
                                 public void onBoomButtonClick(int index) {
                                     Intent openCam = new Intent(mContext, MainCamera.class);
+                                    openCam.putExtra("mode",1);
                                     openCam.putExtra("BaiThi", baiThi);
                                     mContext.startActivity(openCam);
                                 }

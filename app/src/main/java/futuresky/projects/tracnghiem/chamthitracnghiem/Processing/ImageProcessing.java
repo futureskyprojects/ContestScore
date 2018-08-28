@@ -6,6 +6,8 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.itextpdf.text.pdf.BaseField;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -447,7 +449,7 @@ public class ImageProcessing {
     public int[][] findAnswer(int area, double[][] rs, int[] findAnswer, int form) {
         int[][] draw = (int[][]) Array.newInstance(Integer.TYPE, new int[]{5, 10});
         int start = start(area, form);
-        Log.d("vinhtuanleStart", start + " ");
+//        Log.e("KHU VỰC", area + " START " + start);
         for (int i = 0; i < 10; i++) {
             int j;
             double[] temp = new double[5];
@@ -468,12 +470,12 @@ public class ImageProcessing {
                     }
                 }
             }
-            for (j = 0; j < 5; j++) {
-                Log.d("vinhtuanlesort", area + " " + temp[j]);
-            }
+//            for (j = 0; j < 5; j++) {
+//                Log.d("SẮP XẾP", area + " " + temp[j]);
+//            }
             if (check(temp)) {
                 if (findAnswer[start + i] == -1) {
-                    findAnswer[start + i] = 4 - index[0];
+                    findAnswer[start + i] = 5 - index[0];
                 } else {
                     findAnswer[start + i] = -1;
                 }
@@ -496,7 +498,7 @@ public class ImageProcessing {
         return true;
     }
 
-    int getAreaMade(int form) {
+    public int getAreaMade(int form) {
         switch (form) {
             case 20:
                 return 0;
@@ -511,7 +513,7 @@ public class ImageProcessing {
         }
     }
 
-    int getAreaSBD(int form) {
+    public int getAreaSBD(int form) {
         switch (form) {
             case 20:
                 return 2;
@@ -526,7 +528,7 @@ public class ImageProcessing {
         }
     }
 
-    int checkAreaDraw(int area, int form, int j) {
+    public int checkAreaDraw(int area, int form, int j) {
         int areaMade = getAreaMade(form);
         int areaSBD = getAreaSBD(form);
         if (area == areaMade) {
@@ -543,20 +545,19 @@ public class ImageProcessing {
         return 0;
     }
 
-    public void printAnswer(int mode, int[] a) {
-        for (int i = 0; i < a.length; i++) {
-            if (mode == 0) {
-                Log.d("vinhtuanleKey", "Cau" + ((i + 1) - 10) + ": " + a[i] + " ");
-            } else {
-                Log.d("vinhtuanleAnswer", "Cau" + ((i + 1) - 10) + ": " + a[i] + " ");
-            }
-        }
-    }
+//    public void printAnswer(int mode, int[] a) {
+//        for (int i = 0; i < a.length; i++) {
+//            if (mode == 0) {
+//                Log.d("vinhtuanleKey", "Cau" + ((i + 1) - 10) + ": " + a[i] + " ");
+//            } else {
+//                Log.d("vinhtuanleAnswer", "Cau" + ((i + 1) - 10) + ": " + a[i] + " ");
+//            }
+//        }
+//    }
 
     public int findScore(int[] myAnswer, int[] answer, int sentence) {
         int score = 0;
         int number = sentence + 20;
-        Log.d("vinhtuanleNumber", number + " ");
         int i = 20;
         while (i < number) {
             if (myAnswer[i] != -1 && myAnswer[i] == answer[i]) {
@@ -620,7 +621,7 @@ public class ImageProcessing {
             }
         }
         for (i = 0; i < number; i++) {
-            Log.d("rectTrue", pointTrue[i].x + " " + pointTrue[i].y);
+//            Log.d("rectTrue", pointTrue[i].x + " " + pointTrue[i].y);
         }
         return pointTrue;
     }
@@ -628,7 +629,7 @@ public class ImageProcessing {
     public Bitmap cropInfo(Point[] points, Bitmap bitmap) {
         Point p1 = points[2];
         int height = (int) p1.y;
-        Log.d("length", ((int) p1.x) + " " + height);
+//        Log.d("length", ((int) p1.x) + " " + height);
         Matrix matrix = new Matrix();
         matrix.postRotate(270.0f);
         return Bitmap.createBitmap(bitmap, height / 5, 0, height / 2, height / 10, matrix, true);
@@ -680,7 +681,6 @@ public class ImageProcessing {
 
     public Mat getMat(Mat src, Point point, int w, int h) {
         Rect rect = new Rect((int) (point.x - ((double) w)), (int) (point.y - ((double) h)), w * 2, h * 2);
-        Log.e("historygetMat", rect.x + " " + rect.y + " " + rect.width + " " + w);
         return src.submat(rect);
     }
 
@@ -706,7 +706,7 @@ public class ImageProcessing {
     public double getRatePixel(Mat mat) {
         int myArea = mat.width() * mat.height();
         int black = myArea - Core.countNonZero(mat);
-        Log.d("vinhtuanleBlack", black + " " + myArea);
+//        Log.d("vinhtuanleBlack", black + " " + myArea);
         return ((double) black) / ((double) myArea);
     }
 
@@ -715,7 +715,7 @@ public class ImageProcessing {
         Point point = new Point();
         int w = mat.width();
         int h = mat.height();
-        Log.e("historyWH", w + " " + h + " " + startPoint.x + " " + startPoint.y);
+//        Log.e("historyWH", w + " " + h + " " + startPoint.x + " " + startPoint.y);
         int startX = 0;
         int startY = 0;
         int finishX = 0;
@@ -726,13 +726,13 @@ public class ImageProcessing {
         while (i < w) {
             for (j = 0; j < h; j++) {
                 int value = (int) mat.get(j, i)[0];
-                Log.e("value", value + " ");
+//                Log.e("value", value + " ");
                 if (value == 0) {
                     arrX[i] = arrX[i] + 1;
                 }
                 if (arrX[i] > h / 2) {
                     startX = i;
-                    Log.e("historyGramstartX", i + " ");
+//                    Log.e("historyGramstartX", i + " ");
                     j = h;
                     i = w;
                     break;
@@ -748,7 +748,7 @@ public class ImageProcessing {
                 }
                 if (arrX[i] > h / 2) {
                     finishX = i;
-                    Log.e("historyGramfinishX", i + " ");
+//                    Log.e("historyGramfinishX", i + " ");
                     i = -1;
                     break;
                 }
@@ -759,13 +759,13 @@ public class ImageProcessing {
         while (j < h) {
             for (i = 0; i < w; i++) {
                 int value = (int) mat.get(j, i)[0];
-                Log.e("value", value + " ");
+//                Log.e("value", value + " ");
                 if (value == 0) {
                     arrY[j] = arrY[j] + 1;
                 }
                 if (arrY[j] > w / 2) {
                     startY = j;
-                    Log.e("historyGramstartY", j + " ");
+//                    Log.e("historyGramstartY", j + " ");
                     j = h;
                     i = w;
                     break;
@@ -781,7 +781,7 @@ public class ImageProcessing {
                 }
                 if (arrY[j] > w / 2) {
                     finishY = j;
-                    Log.e("historyGramfinishY", j + " ");
+//                    Log.e("historyGramfinishY", j + " ");
                     j = -1;
                     i = -1;
                     break;
@@ -791,7 +791,7 @@ public class ImageProcessing {
         }
         point.x = startPoint.x + ((double) ((finishX + startX) / 2));
         point.y = startPoint.y + ((double) ((finishY + startY) / 2));
-        Log.d("historyPoint", ((finishX + startX) / 2) + " " + ((finishY + startY) / 2));
+//        Log.d("historyPoint", ((finishX + startX) / 2) + " " + ((finishY + startY) / 2));
         return point;
     }
 
@@ -861,13 +861,22 @@ public class ImageProcessing {
 
     public int[] convertKeyToArray(String str, int form, int sentence) {
         int i;
-        String[] arr = str.split("_");
+        String[] arr = new String[str.length()];
+        char[] carr = str.toCharArray();
+        for (int j = 0; j < carr.length;j++)
+        {
+            arr[j] = Character.toString(carr[j]);
+//            Log.d("CÂU " + j, arr[j]);
+        }
+
         int[] rs = new int[(form + 20)];
+        // Gán tất cả các giá trị là -1 hết
         for (i = 0; i < rs.length; i++) {
             rs[i] = -1;
         }
+
         for (i = 20; i < sentence + 20; i++) {
-            rs[i] = Integer.parseInt(arr[i]);
+            rs[i] = Integer.parseInt(arr[i-20]);
         }
         return rs;
     }
@@ -894,10 +903,10 @@ public class ImageProcessing {
                     }
                 }
             }
-            for (j = 0; j < 10; j++) {
-                Log.d("vinhtuanlesortMade", "5 " + temp[j]);
-            }
-            Log.d("vinhtuanlesortMade", check(temp) + " ");
+//            for (j = 0; j < 10; j++) {
+//                Log.d("vinhtuanlesortMade", "5 " + temp[j]);
+//            }
+//            Log.d("vinhtuanlesortMade", check(temp) + " ");
             if (check(temp)) {
                 sbd[5 - i] = index[0];
             } else {
@@ -905,7 +914,7 @@ public class ImageProcessing {
             }
         }
         String sobaodanh = convertArrayToString(sbd);
-        Log.d("vinhtuanleMade", sobaodanh + " ");
+//        Log.d("vinhtuanleMade", sobaodanh + " ");
         return sobaodanh;
     }
 
@@ -931,10 +940,10 @@ public class ImageProcessing {
                     }
                 }
             }
-            for (j = 0; j < 10; j++) {
-                Log.d("vinhtuanlesortMade", "4 " + temp[j]);
-            }
-            Log.d("vinhtuanlesortMade", check(temp) + " ");
+//            for (j = 0; j < 10; j++) {
+//                Log.d("vinhtuanlesortMade", "4 " + temp[j]);
+//            }
+//            Log.d("vinhtuanlesortMade", check(temp) + " ");
             if (check(temp)) {
                 md[4 - i] = index[0];
             } else {
@@ -942,7 +951,7 @@ public class ImageProcessing {
             }
         }
         String made = convertArrayToString(md);
-        Log.d("vinhtuanleS", made + " ");
+//        Log.d("vinhtuanleS", made + " ");
         return made;
     }
 
@@ -980,7 +989,7 @@ public class ImageProcessing {
         return ((dx1 * dx2) + (dy1 * dy2)) / Math.sqrt((((dx1 * dx1) + (dy1 * dy1)) * ((dx2 * dx2) + (dy2 * dy2))) + 1.0E-10d);
     }
 
-    void extractChannel(Mat source, Mat out, int channelNum) {
+    public void extractChannel(Mat source, Mat out, int channelNum) {
         List<Mat> sourceChannels = new ArrayList();
         List<Mat> outChannel = new ArrayList();
         Core.split(source, sourceChannels);
@@ -989,7 +998,7 @@ public class ImageProcessing {
         Core.merge(outChannel, out);
     }
 
-    MatOfPoint approxPolyDP(MatOfPoint curve, double epsilon, boolean closed) {
+    public MatOfPoint approxPolyDP(MatOfPoint curve, double epsilon, boolean closed) {
         MatOfPoint2f tempMat = new MatOfPoint2f();
         Imgproc.approxPolyDP(new MatOfPoint2f(curve.toArray()), tempMat, epsilon, closed);
         return new MatOfPoint(tempMat.toArray());
