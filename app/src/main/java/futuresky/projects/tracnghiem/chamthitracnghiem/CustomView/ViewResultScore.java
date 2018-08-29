@@ -1,10 +1,12 @@
 package futuresky.projects.tracnghiem.chamthitracnghiem.CustomView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.drm.DrmStore;
 import android.graphics.Color;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +14,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,7 +31,9 @@ import org.w3c.dom.Text;
 
 import java.util.Random;
 
+import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.PhieuTraLoi.DsPhieuTraLoi;
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.PhieuTraLoi.PhieuTraLoi;
+import futuresky.projects.tracnghiem.chamthitracnghiem.Database.PhieuTraLoi.PhieuTraLoiDatabase;
 import futuresky.projects.tracnghiem.chamthitracnghiem.MainCamera;
 import futuresky.projects.tracnghiem.chamthitracnghiem.R;
 
@@ -37,6 +43,8 @@ public class ViewResultScore extends AppCompatActivity {
     PhieuTraLoi myPTL;
     ImageView resultView;
     TextView ShowScore;
+    boolean isReView = false;
+    PhieuTraLoiDatabase phieuTraLoiDatabase;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -73,12 +81,92 @@ public class ViewResultScore extends AppCompatActivity {
 
         //region Thao tác khi nhấn nút lưu bài làm
         else if (id == R.id.activity_view_result_score_saveAns) {
-            Toast.makeText(this, "Lưu bài thi hiện chưa khả dụng!", Toast.LENGTH_SHORT).show();
+            // Nếu không phải là trạng thái xem lại
+            if (!isReView)
+            {
+                AlertDialog.Builder mbox = new AlertDialog.Builder(ViewResultScore.this)
+                        .setTitle("LƯU BÀI LÀM?")
+                        .setMessage("Quý Thầy/Cô xác nhận lưu bài làm này?")
+                        .setPositiveButton("Lưu", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                int MaxID = phieuTraLoiDatabase.MaxID();
+                                myPTL.setID(Integer.toString(MaxID+1));
+                                phieuTraLoiDatabase.ThemPhieuTL(myPTL);
+                                if (MaxID == Integer.parseInt(myPTL.getID()))
+                                {
+                                    Toast.makeText(ViewResultScore.this, "Đã lưu!", Toast.LENGTH_SHORT).show();
+                                    onBackPressed();
+                                    finish();
+                                }
+                                else
+                                {
+                                    Toast.makeText(ViewResultScore.this, "Chưa lưu. Vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Xem lại", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        });
+                mbox.create();
+                mbox.show();
+            }
+            // Khi đó là trạng thái xem lại
+            else
+            {
+                AlertDialog.Builder mbox = new AlertDialog.Builder(ViewResultScore.this)
+                        .setTitle("XÁC NHẬN XÓA?")
+                        .setMessage("Quý thầy/cô thực sự muốn xóa bài làm này?")
+                        .setPositiveButton("Không", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.cancel();
+                            }
+                        })
+                        .setNegativeButton("Xóa", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent data = new Intent();
+                                String resultOK = "0";
+                                if (phieuTraLoiDatabase.XoaPhieuTraLoi(
+                                        Integer.parseInt(myPTL.getID()))!=-1)
+                                {
+                                    Toast.makeText(ViewResultScore.this, "Đã xóa!", Toast.LENGTH_SHORT).show();
+                                    resultOK = "1";
+                                    data.setData(Uri.parse(resultOK));
+                                    setResult(DsPhieuTraLoi.DELETE_CODE, data);
+                                    onBackPressed();
+                                    finish();
+                                }
+                                else
+                                {
+                                    Toast.makeText(ViewResultScore.this, "Xóa không thành công!", Toast.LENGTH_SHORT).show();
+                                    dialogInterface.cancel();
+                                    return;
+                                }
+                            }
+                        });
+                mbox.create();
+                mbox.show();
+            }
         }
         //endregion
-
         else
             Toast.makeText(this, "Lựa chọn không tồn tại, vui lòng kiểm tra lại!", Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.view_result_score_menu, menu);
+        if (isReView)
+            menu.findItem(R.id.activity_view_result_score_saveAns).setIcon(R.drawable.ic_deleteall);
+        else
+            menu.findItem(R.id.activity_view_result_score_saveAns).setIcon(R.drawable.ic_save);
         return true;
     }
 
@@ -86,11 +174,13 @@ public class ViewResultScore extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_result_score);
+        isReView = getIntent().getBooleanExtra("isReview", false);
         //region Thiết lập thanh toolbar cho activity
         mytoolbar = (Toolbar) findViewById(R.id.activity_view_result_score_toolbar);
         setSupportActionBar(mytoolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        phieuTraLoiDatabase = new PhieuTraLoiDatabase(ViewResultScore.this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
@@ -110,27 +200,33 @@ public class ViewResultScore extends AppCompatActivity {
             myPTL = (PhieuTraLoi) getIntent().getSerializableExtra("PhieuTraLoi");
             mytoolbar.setTitle("SBD: " + myPTL.getSBD());
             resultView.setImageBitmap(myPTL.getImageOfPTL());
-            Toast.makeText(this, "Điểm: " + myPTL.getDiem(), Toast.LENGTH_SHORT).show();
             ShowScore.setText(Float.toString((float) Math.round(myPTL.getDiem() * 10) / 10));
-            //region Khi mã đề không nhận diện được
-            if (myPTL.getMaDe().contains("-")) {
-                android.app.AlertDialog.Builder xmbox = new android.app.AlertDialog.Builder(ViewResultScore.this)
-                        .setTitle("VẤN ĐỀ NHẬN DIỆN")
-                        .setMessage("Hiện không nhận diện rõ mã đề, mong quý Thầy/Cô vui lòng chấm lại hoặc chấm thủ công để đảm bảo!\n\n" +
-                                "MẸO: Nghiêng điện thoại từ 30-45 độ để giảm thiểu phản quang của ánh sáng.")
-                        .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                onBackPressed();
-                                finish();
-                                return;
-                            }
-                        });
+            if (!isReView)
+            {
+                //region Khi mã đề không nhận diện được
+                if (myPTL.getMaDe().contains("-")) {
+                    android.app.AlertDialog.Builder xmbox = new android.app.AlertDialog.Builder(ViewResultScore.this)
+                            .setTitle("VẤN ĐỀ NHẬN DIỆN")
+                            .setMessage("Hiện không nhận diện rõ mã đề, mong quý Thầy/Cô vui lòng chấm lại hoặc chấm thủ công để đảm bảo!\n\n" +
+                                    "MẸO: Nghiêng điện thoại từ 30-45 độ để giảm thiểu phản quang của ánh sáng.")
+                            .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    onBackPressed();
+                                    finish();
+                                    return;
+                                }
+                            });
 
-                xmbox.create();
-                xmbox.show();
+                    xmbox.create();
+                    xmbox.show();
+                }
+                //endregion
             }
-            //endregion
+            else
+            {
+                //
+            }
         } else {
             mytoolbar.setTitle("SBD: ------");
             AlertDialog.Builder mbox = new AlertDialog.Builder(ViewResultScore.this)

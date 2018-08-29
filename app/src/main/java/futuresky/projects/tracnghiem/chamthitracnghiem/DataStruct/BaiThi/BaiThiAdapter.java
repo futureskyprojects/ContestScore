@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.DapAn.DanhSachDapAn;
+import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.PhieuTraLoi.DsPhieuTraLoi;
 import futuresky.projects.tracnghiem.chamthitracnghiem.Database.BaiThi.BaiThiDatabase;
 import futuresky.projects.tracnghiem.chamthitracnghiem.MainActivity;
 import futuresky.projects.tracnghiem.chamthitracnghiem.MainCamera;
@@ -135,7 +136,9 @@ public class BaiThiAdapter extends ArrayAdapter<BaiThi> implements View.OnClickL
                             .listener(new OnBMClickListener() {
                                 @Override
                                 public void onBoomButtonClick(int index) {
-                                    ActionToDo(index, baiThi);
+                                    Intent dsBaiLam = new Intent(mContext, DsPhieuTraLoi.class)
+                                            .putExtra("BaiThi", baiThi);
+                                    mContext.startActivity(dsBaiLam);
                                 }
                             });
                     break;

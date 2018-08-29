@@ -33,8 +33,9 @@ public class MakeActivity extends AppCompatActivity {
     BaiThi thisBaiThi;
     Toolbar mytoolbar;
     String myMaDe;
+    public static final int BackButton = 16908;
     RecyclerView recyclerView;
-    DapAnDatabase databaseAction;   // Dành cho thao tác dữ liệu với đáp án
+    DapAnDatabase databaseAction;   // Dành cho thao tác 332;dữ liệu với đáp án
     futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.DapAn.DapAn dapAn = new futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.DapAn.DapAn();   // Dành cho lưu trữ đáp án của mã đề hiện hành
     String id_made; // Lưu ID của mã đề hiện hành - ở chế độ xem lại
     protected boolean isReview = false;
@@ -66,7 +67,7 @@ public class MakeActivity extends AppCompatActivity {
                 CheckAndSave();
             else
                 DeleteX();
-        } else if (id == 16908332) {
+        } else if (id == BackButton) {
             if (!isReview)
             {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MakeActivity.this);

@@ -55,9 +55,13 @@
         <activity
             android:name=".DataStruct.DapAn.DanhSachDapAn"
             android:label="Danh sách đáp án"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".CustomView.ViewResultScore"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CustomView.ViewResultScore"
             android:label="Xem kết quả"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".DataStruct.PhieuTraLoi.DsPhieuTraLoi"
+            android:label="Danh sách bài làm"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

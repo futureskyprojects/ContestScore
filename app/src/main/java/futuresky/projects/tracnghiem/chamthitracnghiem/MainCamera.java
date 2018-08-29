@@ -717,7 +717,8 @@ public class MainCamera extends AppCompatActivity implements CameraBridgeViewBas
             //endregion
 
             Intent resultintent = new Intent(MainCamera.this, ViewResultScore.class)
-                    .putExtra("PhieuTraLoi", myPhieuTraLoi);
+                    .putExtra("PhieuTraLoi", myPhieuTraLoi)
+                    .putExtra("isReview", false);
             startActivity(resultintent);
         }
 

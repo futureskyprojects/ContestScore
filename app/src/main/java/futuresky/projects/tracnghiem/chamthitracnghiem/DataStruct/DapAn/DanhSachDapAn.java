@@ -115,11 +115,11 @@ public class DanhSachDapAn extends AppCompatActivity {
             public void run() {
                 // Lấy danh sách mã đề từ csdl
                 dsMaDe = dapAnDatabase.TatCaDapAn(baiThi);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            key_adapter = new DapAnAdapter(dsMaDe, DanhSachDapAn.this);
                             lv.setAdapter(key_adapter);
                             prg.setVisibility(View.INVISIBLE);
                             if (lv.getCount() > 0)
