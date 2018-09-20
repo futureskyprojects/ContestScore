@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ThongKe.LoaiDiem.ThongKeLoaiDiem">
+    <ListView
+        android:id="@+id/ListOfScoreKind"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+<TextView
+    android:id="@+id/EmptyNotification"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textAlignment="center"
+    android:gravity="center"
+    android:textSize="20dp"
+    android:padding="20dp"
+    android:textColor="#2980b9"
+    android:text="Dữ liệu chưa có nên không thể thực hiện thống kê!"/>
+</FrameLayout>
