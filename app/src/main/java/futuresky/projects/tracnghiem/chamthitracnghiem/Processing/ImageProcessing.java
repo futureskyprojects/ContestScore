@@ -943,9 +943,9 @@ public class ImageProcessing {
         Core.merge(outChannel, out);
     }
 
-    public MatOfPoint approxPolyDP(MatOfPoint curve, double epsilon, boolean closed) {
-        MatOfPoint2f tempMat = new MatOfPoint2f();
-        Imgproc.approxPolyDP(new MatOfPoint2f(curve.toArray()), tempMat, epsilon, closed);
-        return new MatOfPoint(tempMat.toArray());
-    }
+//    public MatOfPoint approxPolyDP(MatOfPoint curve, double epsilon, boolean closed) {
+//        MatOfPoint2f tempMat = new MatOfPoint2f();
+//        Imgproc.approxPolyDP(new MatOfPoint2f(curve.toArray()), tempMat, epsilon, closed);
+//        return new MatOfPoint(tempMat.toArray());
+//    }
 }
