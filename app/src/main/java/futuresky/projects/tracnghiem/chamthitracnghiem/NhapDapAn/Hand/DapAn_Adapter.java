@@ -21,6 +21,7 @@ public class DapAn_Adapter extends Adapter<DapAn_Holder> {
     List<DapAn> list = Collections.emptyList();
     boolean isCheck = false;
     boolean isReview = false;
+    boolean isMaybe = false;
 
     // Constructure của hắn
     public DapAn_Adapter(List<DapAn> list, Context myContext, BaiThi baiThi) {
@@ -29,7 +30,10 @@ public class DapAn_Adapter extends Adapter<DapAn_Holder> {
         this.list = list;
         this.myContext = myContext;
         if (myContext instanceof MakeActivity)
+        {
             isReview = ((MakeActivity) myContext).isReview;
+            isMaybe = ((MakeActivity) myContext).isMaybe;
+        }
     }
 
     @Override
@@ -121,8 +125,15 @@ public class DapAn_Adapter extends Adapter<DapAn_Holder> {
         holder.a.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isReview)
+                if (!isReview || isMaybe)
+                {
+                    if (Integer.parseInt(list.get(position).n) > baithi.getSoCau())
+                    {
+                        Toast.makeText(myContext, "Đã vượt quá giới hạn số câu của bài thi!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     DapAn_Adapter.this.setSelect(1, position);
+                }
                 else if (cout_press++ % 10 == 0)
                     Toast.makeText(myContext, "BẢO ĐẢM AN TOÀN: Không cho phép sửa đáp án!", Toast.LENGTH_SHORT).show();
             }
@@ -130,8 +141,15 @@ public class DapAn_Adapter extends Adapter<DapAn_Holder> {
         holder.b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isReview)
+                if (!isReview || isMaybe)
+                {
+                    if (Integer.parseInt(list.get(position).n) > baithi.getSoCau())
+                    {
+                        Toast.makeText(myContext, "Đã vượt quá giới hạn số câu của bài thi!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     DapAn_Adapter.this.setSelect(2, position);
+                }
                 else if (cout_press++ % 10 == 0)
                     Toast.makeText(myContext, "BẢO ĐẢM AN TOÀN: Không cho phép sửa đáp án!", Toast.LENGTH_SHORT).show();
             }
@@ -139,8 +157,15 @@ public class DapAn_Adapter extends Adapter<DapAn_Holder> {
         holder.c.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isReview)
+                if (!isReview || isMaybe)
+                {
+                    if (Integer.parseInt(list.get(position).n) > baithi.getSoCau())
+                    {
+                        Toast.makeText(myContext, "Đã vượt quá giới hạn số câu của bài thi!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     DapAn_Adapter.this.setSelect(3, position);
+                }
                 else if (cout_press++ % 10 == 0)
                     Toast.makeText(myContext, "BẢO ĐẢM AN TOÀN: Không cho phép sửa đáp án!", Toast.LENGTH_SHORT).show();
             }
@@ -148,8 +173,15 @@ public class DapAn_Adapter extends Adapter<DapAn_Holder> {
         holder.d.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isReview)
+                if (!isReview || isMaybe)
+                {
+                    if (Integer.parseInt(list.get(position).n) > baithi.getSoCau())
+                    {
+                        Toast.makeText(myContext, "Đã vượt quá giới hạn số câu của bài thi!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     DapAn_Adapter.this.setSelect(4, position);
+                }
                 else if (cout_press++ % 10 == 0)
                     Toast.makeText(myContext, "BẢO ĐẢM AN TOÀN: Không cho phép sửa đáp án!", Toast.LENGTH_SHORT).show();
             }

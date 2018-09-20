@@ -45,6 +45,9 @@ import java.util.List;
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.BaiThi.BaiThi;
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.BaiThi.DsBaiThiFrg;
 import futuresky.projects.tracnghiem.chamthitracnghiem.Database.BaiThi.BaiThiDatabase;
+import futuresky.projects.tracnghiem.chamthitracnghiem.MauPhieu.MauPhieuFragment;
+import futuresky.projects.tracnghiem.chamthitracnghiem.Setting.Setting;
+import futuresky.projects.tracnghiem.chamthitracnghiem.Setting.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
@@ -52,8 +55,10 @@ public class MainActivity extends AppCompatActivity
     private RapidFloatingActionButton rfaBtn;
     private RapidFloatingActionHelper rfabHelper;
     private Fragment DsBaiThi;
+    private Fragment MauPhieu;
     private Toolbar toolbar;
     private BaiThiDatabase DuLieu;
+    NavigationView navigationView;
     public final static int CAMERA_PERMISSION = 0xA0;
     public final static int READ_EXTERNAL_STORAGE = 0xA1;
     public final static int WRITE_EXTERNAL_STORAGE = 0xA2;
@@ -101,13 +106,14 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.app_name, R.string.app_name);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
+        MauPhieu = new MauPhieuFragment();
         DsBaiThi = new DsBaiThiFrg();
         setFragment(DsBaiThi);
         toolbar.setTitle("Danh sách bài thi");
@@ -160,24 +166,26 @@ public class MainActivity extends AppCompatActivity
             previous_selected = id;
             rfaLayout.setVisibility(View.INVISIBLE);
             toolbar.setTitle("Mẫu phiếu");
+            setFragment(MauPhieu);
         } else if (id == R.id.nav_hd && previous_selected != id) {
             previous_selected = id;
             rfaLayout.setVisibility(View.INVISIBLE);
             toolbar.setTitle("Hướng dẫn");
         } else if (id == R.id.nav_caidat && previous_selected != id) {
-            previous_selected = id;
-            rfaLayout.setVisibility(View.INVISIBLE);
-            toolbar.setTitle("Thiết lập");
+            Intent mySetting = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(mySetting);
+            item.setChecked(false);
+            navigationView.getMenu().getItem(0).setChecked(true);
         } else if (id == R.id.nav_share && previous_selected != id) {
             Toast.makeText(this, "Chia sẻ ứng dụng ngay!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_fb && previous_selected != id) {
             Toast.makeText(this, "Đang đến Facebook tác giả...", Toast.LENGTH_SHORT).show();
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/tx.trongnghia98"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Setting.applicationAuthorFacebook));
             startActivity(browserIntent);
         } else if (id == R.id.nav_send && previous_selected != id) {
             Toast.makeText(this, "Mở email để gửi phản hồi!", Toast.LENGTH_SHORT).show();
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                    "mailto", "projects.futuresky@gmail.com", null));
+                    "mailto", Setting.applicationAuthorEmail, null));
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Phản hồi về dự án phần mềm chấm thi trắc nghiệm trên điện thoại dùng hệ điều hành Android");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Nhập nội dung phản hồi của bạn vào đây");
             startActivity(Intent.createChooser(emailIntent, "Gửi phản hồi"));

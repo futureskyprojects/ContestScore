@@ -12,11 +12,6 @@ import java.util.ArrayList;
 
 import futuresky.projects.tracnghiem.chamthitracnghiem.Database.BaiThi.BaiThiDatabase;
 import futuresky.projects.tracnghiem.chamthitracnghiem.R;
-
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class DsBaiThiFrg extends Fragment {
 
     private ListView dsBaiThi;

@@ -17,6 +17,7 @@
         android:name="android.hardware.camera.front.autofocus"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -60,8 +61,15 @@
             android:name=".CustomView.ViewResultScore"
             android:label="Xem kết quả"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".DataStruct.PhieuTraLoi.DsPhieuTraLoi"
+        <activity
+            android:name=".DataStruct.PhieuTraLoi.DsPhieuTraLoi"
             android:label="Danh sách bài làm"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Setting.SettingsActivity"
+            android:label="Cài đặt" />
+        <activity android:name=".ThongKe.ThongKeActivity"
+            android:label="Thống kê"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

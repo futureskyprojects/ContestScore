@@ -23,6 +23,10 @@ public class DapAnDatabase {
     }
 
     // Phương thức để thêm mới Đáp án vào cơ sở dữ liệu
+    public void ThemDapAn(DapAn dapAn)
+    {
+        ThemDapAn(Integer.parseInt(dapAn.getID()), Integer.parseInt(dapAn.getMaBaiThi()), dapAn.getMaDe(), dapAn.getDapAn());
+    }
     public void ThemDapAn(int id, BaiThi baiThi, String made, String dapan)
     {
         ThemDapAn(id,Integer.parseInt(baiThi.getId()), made, dapan);
@@ -38,6 +42,10 @@ public class DapAnDatabase {
         this.database.insert(DapAnHelper.Table_DapAn, null, values);
     }
     // Phương thức để sửa đáp án của một đề thi trong csdl
+    public void SuaDapAn(DapAn dapAn)
+    {
+        SuaDapAn(Integer.parseInt(dapAn.getID()), Integer.parseInt(dapAn.getMaBaiThi()), dapAn.getMaDe(), dapAn.getDapAn());
+    }
     public void SuaDapAn(int id, BaiThi baiThi, String made, String dapan)
     {
         SuaDapAn(id,Integer.parseInt(baiThi.getId()), made, dapan);

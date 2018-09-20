@@ -17,17 +17,19 @@ public class PhieuTraLoiHelper extends SQLiteOpenHelper {
     public static String Name = "path_name";
     public static String Diem = "diem";
     public static String MaDe = "ma_de";
+    public static String DSanswer = "AnswerList";
     public static String SoCauDung = "so_cau_dung";
     public static String TongCau = "tong_cau"; // Tổng số câu hay số câu của bài thi
     public static String PhieuTL = "image_ptl";
     // Các truy vấn thiết yếu
-    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+    public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
             ID + " INTEGER PRIMARY KEY, " +
             MaBaiThi + " TEXT, " +
             SBD + " TEXT, " +
             Name + " BLOB, " +
             Diem + " REAL, " +
             MaDe + " TEXT, " +
+            DSanswer + " TEXT, " +
             SoCauDung + " INTEGER, " +
             TongCau + " INTEGER, " +
             PhieuTL + " BLOB)";

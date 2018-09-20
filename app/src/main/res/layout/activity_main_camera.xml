@@ -17,4 +17,11 @@
         android:id="@+id/prevView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <ImageView
+        android:id="@+id/back_down_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="30dp"
+        android:layout_gravity="center|right"
+        android:src="@drawable/back_down"/>
 </FrameLayout>

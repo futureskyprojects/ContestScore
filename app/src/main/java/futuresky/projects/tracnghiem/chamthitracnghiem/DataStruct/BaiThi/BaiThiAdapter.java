@@ -33,6 +33,7 @@ import futuresky.projects.tracnghiem.chamthitracnghiem.MainActivity;
 import futuresky.projects.tracnghiem.chamthitracnghiem.MainCamera;
 import futuresky.projects.tracnghiem.chamthitracnghiem.Database.PhieuTraLoi.PhieuTraLoiDatabase;
 import futuresky.projects.tracnghiem.chamthitracnghiem.R;
+import futuresky.projects.tracnghiem.chamthitracnghiem.ThongKe.ThongKeActivity;
 
 public class BaiThiAdapter extends ArrayAdapter<BaiThi> implements View.OnClickListener {
     private ArrayList<BaiThi> dsBaiThi;
@@ -146,11 +147,13 @@ public class BaiThiAdapter extends ArrayAdapter<BaiThi> implements View.OnClickL
                     builder = new HamButton.Builder()
                             .normalImageRes(R.drawable.thong_ke)
                             .normalText("Thống kê")
-                            .subNormalText("Lấy số liệu thống kê về kỳ thi này!")
+                            .subNormalText("Lấy số liệu thống kê về bài thi này!")
                             .listener(new OnBMClickListener() {
                                 @Override
                                 public void onBoomButtonClick(int index) {
-                                    ActionToDo(index, baiThi);
+                                    Intent thongKe = new Intent(mContext, ThongKeActivity.class)
+                                            .putExtra("BaiThi", baiThi);
+                                    mContext.startActivity(thongKe);
                                 }
                             });
                     break;

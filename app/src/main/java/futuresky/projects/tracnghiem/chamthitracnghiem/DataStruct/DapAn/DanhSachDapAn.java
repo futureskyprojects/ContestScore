@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import futuresky.projects.tracnghiem.chamthitracnghiem.DataStruct.BaiThi.BaiThi;
 import futuresky.projects.tracnghiem.chamthitracnghiem.Database.DapAn.DapAnDatabase;
+import futuresky.projects.tracnghiem.chamthitracnghiem.MainCamera;
 import futuresky.projects.tracnghiem.chamthitracnghiem.NhapDapAn.Hand.MakeActivity;
 import futuresky.projects.tracnghiem.chamthitracnghiem.R;
 
@@ -43,6 +44,8 @@ public class DanhSachDapAn extends AppCompatActivity {
     public DapAnDatabase dapAnDatabase;
     public static final int RESULT_CODE = 0x33;
     public static final int DELETED_CODE = 0x44;
+    public static final int CAMERA_INPUT_CODE = 0x55;
+    private boolean editAfterScan = false;
     public DapAn currentDapAn;
 
     // Sự kiện khi người dùng nhấn nút mũi tên quay lại
@@ -53,6 +56,13 @@ public class DanhSachDapAn extends AppCompatActivity {
         return true;
     }
 
+    void CameraInput() {
+        Intent CameraInput = new Intent(DanhSachDapAn.this, MainCamera.class)
+                .putExtra("BaiThi", baiThi)
+                .putExtra("mode", 0);
+        startActivityForResult(CameraInput, CAMERA_INPUT_CODE);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -61,14 +71,37 @@ public class DanhSachDapAn extends AppCompatActivity {
             NhapMaDe();
         } else if (id == R.id.add_by_camera) // Lựa chọn nhập bằng camera
         {
-            Toast.makeText(this, "Nhập bằng máy ảnh chưa khả dụng!", Toast.LENGTH_SHORT).show();
+            CameraInput();
         } else if (id == R.id.add_by_excel) // Lựa chọn nhập bằng file excels
         {
             Toast.makeText(this, "Nhập bằng excel chưa khả dụng!", Toast.LENGTH_SHORT).show();
         } else if (id == 16908332) {
             onBackPressed();
             finish();
-        } else {
+        } else if (id == R.id.ds_dap_an_delete_all)
+        {
+            AlertDialog.Builder mbox = new AlertDialog.Builder(this)
+                    .setTitle("XÓA TẤT CẢ ĐÁP ÁN?")
+                    .setMessage("Quý Thầy/Cô thực sự muốn xóa tất cả đáp án mẫu của đề thì này?")
+                    .setPositiveButton("Không xóa", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    })
+                    .setNeutralButton("Xóa hết", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dapAnDatabase.deleteAll(baiThi);
+                            key_adapter.clear();
+                            key_adapter.notifyDataSetChanged();
+                            Toast.makeText(DanhSachDapAn.this, "Hoàn tất.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            mbox.create();
+            mbox.show();
+        }
+        else {
             Toast.makeText(this, "Xuất hiện lựa chọn lỗi!", Toast.LENGTH_SHORT).show();
         }
         return true;
@@ -115,7 +148,7 @@ public class DanhSachDapAn extends AppCompatActivity {
             public void run() {
                 // Lấy danh sách mã đề từ csdl
                 dsMaDe = dapAnDatabase.TatCaDapAn(baiThi);
-
+                key_adapter = new DapAnAdapter(dsMaDe, DanhSachDapAn.this);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -141,7 +174,8 @@ public class DanhSachDapAn extends AppCompatActivity {
                 view_Dap_an.putExtra("BaiThi", baiThi);
                 view_Dap_an.putExtra("MaDe", dsMaDe.get(i).getMaDe());
                 view_Dap_an.putExtra("Review", true);
-                view_Dap_an.putExtra("ID_MaDe",dsMaDe.get(i).getID());
+                view_Dap_an.putExtra("Maybe", editAfterScan);
+                view_Dap_an.putExtra("ID_MaDe", dsMaDe.get(i).getID());
                 currentDapAn = dsMaDe.get(i);
                 startActivityForResult(view_Dap_an, DELETED_CODE);
             }
@@ -236,6 +270,7 @@ public class DanhSachDapAn extends AppCompatActivity {
                                     o2.getSelectedItem().toString() +
                                     o3.getSelectedItem().toString());
                             create_by_hand.putExtra("Review", false);
+                            create_by_hand.putExtra("Maybe", editAfterScan);
                             startActivityForResult(create_by_hand, RESULT_CODE);
                         }
                     }
@@ -254,28 +289,158 @@ public class DanhSachDapAn extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == requestCode && (requestCode == RESULT_CODE || requestCode == DELETED_CODE)) {
-            String RecivedData = data.getData().toString().replace("\n","");
+            String RecivedData = data.getData().toString().replace("\n", "");
             String[] Decrypt = RecivedData.split("@@");
             for (int i = 0; i < Decrypt.length; i++) {
                 try {
                     Decrypt[i] = new String(Base64.decode(Decrypt[i], Base64.DEFAULT), "UTF-8");
                 } catch (Exception e) {
                     Decrypt[i] = "---";
-                 }
+                }
             }
             DapAn currentDecryptedDapAn = new DapAn(Decrypt[0], Decrypt[1], Decrypt[2], Decrypt[3]);
-            if (Decrypt[4].contains("false"))
-            {
+            if (Decrypt[4].contains("false")) {
+                Toast.makeText(this, "Đã vào đây!", Toast.LENGTH_SHORT).show();
+                if (editAfterScan)
+                    key_adapter.remove(currentDapAn);
                 key_adapter.add(currentDecryptedDapAn);
                 tv.setVisibility(View.INVISIBLE);
-            }
-            else if (Decrypt[4].contains("true") && currentDapAn.getID().equals(currentDecryptedDapAn.getID()))
-            {
+            } else if (Decrypt[4].contains("true") && currentDapAn.getID().equals(currentDecryptedDapAn.getID())) {
                 key_adapter.remove(currentDapAn);
                 if (key_adapter.getCount() <= 0)
                     tv.setVisibility(View.VISIBLE);
             }
+            editAfterScan = false;
             key_adapter.notifyDataSetChanged();
+        } else if (requestCode == resultCode && resultCode == CAMERA_INPUT_CODE) {
+            String recivedData = data.getData().toString().replace("\n", "").trim();
+            Log.d("RECIVED", recivedData);
+            String Data[] = recivedData.split("_");
+            Log.d("RE_RESULT", "MÃ ĐỀ:" + Data[0] +
+                    "ĐÁP ÁN: " + Data[1]);
+            int MaxID = dapAnDatabase.getMaxID();
+            DapAn newDapAn = new DapAn(MaxID + 1, Integer.parseInt(baiThi.getId()), Data[0], Data[1]);
+            currentDapAn = newDapAn;
+            dapAnDatabase.ThemDapAn(newDapAn);
+            key_adapter.add(newDapAn);
+            key_adapter.notifyDataSetChanged();
+            if (newDapAn.getMaDe().contains("-")) {
+                AlertDialog.Builder mbox = new AlertDialog.Builder(DanhSachDapAn.this)
+                        .setCancelable(false)
+                        .setTitle("NHẬN DIỆN MÃ ĐỀ THIẾU")
+                        .setMessage("Trong quá trình quét đã không nhận diện đầy đủ mã đề và có thể thiếu một số đáp án. Quý Thầy/Cô có muốn sửa?")
+                        .setPositiveButton("Sửa", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ArrayList<Integer> errorNumberPos = new ArrayList();
+                                for (int l = 0; l < currentDapAn.getMaDe().length(); l++) {
+                                    if (currentDapAn.getMaDe().toCharArray()[l] == '-') {
+                                        errorNumberPos.add(l);
+                                        Log.d("ERROR POSITION", l + "");
+                                    }
+                                }
+                                if (errorNumberPos.size() < 0 || errorNumberPos.size() > 3) {
+                                    Toast.makeText(DanhSachDapAn.this, "Lỗi trong quá trình phân giải!", Toast.LENGTH_SHORT).show();
+                                    dapAnDatabase.delete(Integer.parseInt(currentDapAn.getID()));
+                                    key_adapter.remove(currentDapAn);
+                                    key_adapter.notifyDataSetChanged();
+                                    dialogInterface.cancel();
+                                }
+                                LayoutInflater inflater = LayoutInflater.from(DanhSachDapAn.this);
+                                View v = inflater.inflate(R.layout.nhap_ma_de, null);
+                                final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(DanhSachDapAn.this);
+                                builder.setView(v);
+
+                                final Spinner o1 = (Spinner) v.findViewById(R.id.made_num1);
+                                final Spinner o2 = (Spinner) v.findViewById(R.id.made_num2);
+                                final Spinner o3 = (Spinner) v.findViewById(R.id.made_num3);
+
+                                String[] So = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+                                ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter(DanhSachDapAn.this,
+                                        android.R.layout.simple_spinner_dropdown_item, So);
+                                stringArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                                o1.setAdapter(stringArrayAdapter);
+                                o2.setAdapter(stringArrayAdapter);
+                                o3.setAdapter(stringArrayAdapter);
+
+                                if (!errorNumberPos.contains(0))
+                                    o1.setSelection(currentDapAn.getMaDe().toCharArray()[0] - 48);
+                                if (!errorNumberPos.contains(1))
+                                    o2.setSelection(currentDapAn.getMaDe().toCharArray()[1] - 48);
+                                if (!errorNumberPos.contains(2))
+                                    o3.setSelection(currentDapAn.getMaDe().toCharArray()[2] - 48);
+
+                                builder.setCancelable(false)
+                                        .setPositiveButton("Thêm", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                if (o1.getSelectedItemPosition() == -1 ||
+                                                        o2.getSelectedItemPosition() == -1 ||
+                                                        o3.getSelectedItemPosition() == -1) {
+                                                    Toast.makeText(DanhSachDapAn.this, "Mã đề không hợp lệ! Vui lòng thao tác lại.", Toast.LENGTH_SHORT).show();
+                                                    dialogInterface.dismiss();
+                                                } else {
+                                                    currentDapAn.setMaDe(o1.getSelectedItem().toString() +
+                                                            o2.getSelectedItem().toString() +
+                                                            o3.getSelectedItem().toString());
+                                                    dapAnDatabase.SuaDapAn(currentDapAn);
+                                                    key_adapter.notifyDataSetChanged();
+                                                    Toast.makeText(DanhSachDapAn.this, "Hoàn thành sửa mã đề! Mời quý Thầy/Cô kiểm tra lại đáp án.", Toast.LENGTH_SHORT).show();
+                                                    ReviewFunction();
+                                                    dialogInterface.cancel();
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dapAnDatabase.delete(Integer.parseInt(currentDapAn.getID()));
+                                                key_adapter.remove(currentDapAn);
+                                                key_adapter.notifyDataSetChanged();
+                                                dialogInterface.cancel();
+                                            }
+                                        });
+                                builder.create();
+                                builder.show();
+                            }
+                        })
+                        .setNegativeButton("Quét lại", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dapAnDatabase.delete(Integer.parseInt(currentDapAn.getID()));
+                                key_adapter.remove(currentDapAn);
+                                key_adapter.notifyDataSetChanged();
+                                CameraInput();
+                                return;
+                            }
+                        })
+                        .setNeutralButton("Đóng", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dapAnDatabase.delete(Integer.parseInt(currentDapAn.getID()));
+                                key_adapter.remove(currentDapAn);
+                                key_adapter.notifyDataSetChanged();
+                                return;
+                            }
+                        });
+                mbox.create();
+                mbox.show();
+            } else
+            {
+                Toast.makeText(this, "Đã nhập đáp án thành công, mời quý Thầy/Cô xem lại.", Toast.LENGTH_SHORT).show();
+                ReviewFunction();
+            }
         }
+    }
+    void ReviewFunction()
+    {
+        int pos = key_adapter.getPosition(currentDapAn);
+        editAfterScan = true;
+        lv.performItemClick(
+                lv.getAdapter().getView(pos, null, null),
+                pos,
+                lv.getAdapter().getItemId(pos)
+        );
     }
 }

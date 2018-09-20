@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -19,9 +21,13 @@ public class PhieuTraLoiDatabase {
         this.myContext = myConText;
         this.dbHelper = new PhieuTraLoiHelper(myContext);
         this.database = this.dbHelper.getWritableDatabase();
+        this.database.execSQL(PhieuTraLoiHelper.CREATE_TABLE);
     }
 
-    public void ThemPhieuTL(PhieuTraLoi phieuTraLoi) {
+    public long ThemPhieuTL(PhieuTraLoi phieuTraLoi) {
+//        this.database = this.dbHelper.getWritableDatabase();
+//        this.database.execSQL("DROP TABLE IF EXISTS " + this.dbHelper.TABLE_NAME);
+//        return -1;
         ContentValues dl = new ContentValues();
         dl.put(dbHelper.ID, phieuTraLoi.getID());
         dl.put(dbHelper.MaBaiThi, phieuTraLoi.getMaBaiThi());
@@ -29,11 +35,12 @@ public class PhieuTraLoiDatabase {
         dl.put(dbHelper.Name, phieuTraLoi.getName_image());
         dl.put(dbHelper.Diem, phieuTraLoi.getDiem());
         dl.put(dbHelper.MaDe, phieuTraLoi.getMaDe());
+        dl.put(dbHelper.DSanswer, phieuTraLoi.getDS_CauTraLoi());
         dl.put(dbHelper.SoCauDung, phieuTraLoi.getSoCauDung());
         dl.put(dbHelper.TongCau, phieuTraLoi.getSoCauCuaBaiThi());
         dl.put(dbHelper.PhieuTL, phieuTraLoi.getPTL_image());
         this.database = this.dbHelper.getWritableDatabase();
-        this.database.insert(dbHelper.TABLE_NAME, null, dl);
+        return this.database.insert(dbHelper.TABLE_NAME, null, dl);
     }
 
     public void ThayThe(PhieuTraLoi phieuTraLoi) {
@@ -44,6 +51,7 @@ public class PhieuTraLoiDatabase {
         dl.put(dbHelper.Name, phieuTraLoi.getName_image());
         dl.put(dbHelper.Diem, phieuTraLoi.getDiem());
         dl.put(dbHelper.MaDe, phieuTraLoi.getMaDe());
+        dl.put(dbHelper.DSanswer, phieuTraLoi.getDS_CauTraLoi());
         dl.put(dbHelper.SoCauDung, phieuTraLoi.getSoCauDung());
         dl.put(dbHelper.TongCau, phieuTraLoi.getSoCauCuaBaiThi());
         dl.put(dbHelper.PhieuTL, phieuTraLoi.getPTL_image());
@@ -64,7 +72,8 @@ public class PhieuTraLoiDatabase {
                 PhieuTraLoi ptl = new PhieuTraLoi(mCursor.getString(0), mCursor.getString(1),
                         mCursor.getString(2), mCursor.getBlob(3),
                         mCursor.getString(4), mCursor.getString(5),
-                        mCursor.getString(6), mCursor.getString(7), mCursor.getBlob(8));
+                        mCursor.getString(6),mCursor.getString(7),
+                        mCursor.getString(8), mCursor.getBlob(9));
                 if (Integer.parseInt(ptl.getMaBaiThi()) == IDofBaiThi)
                     ds.add(ptl);
             }
@@ -95,7 +104,7 @@ public class PhieuTraLoiDatabase {
         this.database = this.dbHelper.getReadableDatabase();
         Cursor myCoursor = this.database.query(true, this.dbHelper.TABLE_NAME, new String[]
                         {this.dbHelper.ID, this.dbHelper.MaBaiThi, this.dbHelper.SBD,
-                                this.dbHelper.Name, this.dbHelper.Diem, this.dbHelper.MaDe,
+                                this.dbHelper.Name, this.dbHelper.Diem, this.dbHelper.MaDe, this.dbHelper.DSanswer,
                                 this.dbHelper.SoCauDung, this.dbHelper.TongCau, this.dbHelper.PhieuTL},
                 this.dbHelper.ID + "=?",
                 new String[]{Integer.toString(id)}, null, null, null, null, null);
@@ -103,7 +112,7 @@ public class PhieuTraLoiDatabase {
             myCoursor.moveToFirst();
             return new PhieuTraLoi(myCoursor.getString(0), myCoursor.getString(1), myCoursor.getString(2),
                     myCoursor.getBlob(3), myCoursor.getString(4), myCoursor.getString(5),
-                    myCoursor.getString(6), myCoursor.getString(7), myCoursor.getBlob(8));
+                    myCoursor.getString(6), myCoursor.getString(7), myCoursor.getString(8), myCoursor.getBlob(9));
         } else
             return null;
     }
